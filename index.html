@@ -22,7 +22,7 @@
     <!-- Title Navbar -->
     <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
         <div class="container-fluid">
-            <a class="navbar-brand">
+            <a class="navbar-brand mx-auto">
                 <h4><code class="text-danger">JankCPQ</code></h4>
             </a>
         </div>
@@ -31,29 +31,38 @@
     <!-- Navigational Tabs -->
     <ul class="nav nav-tabs text-center">
       <li class="nav-item flex-fill">
-        <b><a id="Configure" class="nav-link active" href="#">Configure</a></b>
+        <b><a id="about-tab" class="nav-link active" href="#about">About</a></b>
       </li>
       <li class="nav-item flex-fill">
-        <b><a id="Price" class="nav-link" href="#">Price</a></b>
+        <b><a id="configure-tab" class="nav-link" href="#configure">Configure</a></b>
       </li>
       <li class="nav-item flex-fill">
-        <b><a id="Quote" class="nav-link" href="#">Quote</a></b>
+        <b><a id="price-tab" class="nav-link" href="#price">Price</a></b>
+      </li>
+      <li class="nav-item flex-fill">
+        <b><a id="quote-tab" class="nav-link" href="#quote">Quote</a></b>
       </li>
     </ul>
     
     <!-- Main Content Loaded Here -->
-    <main>
-      <h1>Hello, World!</h1>
-    </main>
+    <main></main>
     
     <!-- Declare Bootstrap JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    
+    <!-- Declare JsStore JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/jsstore@3.0.0/dist/jsstore.min.js"></script>
+
     <!-- Main Scripting -->
     <script>
-      // Select all nav-link elements
-      const navLinks = document.querySelectorAll('.nav-link');
+      // Declare onLoad Event when app is opened
+      window.addEventListener('load', function() {
+        mainSection.innerHTML = generateAboutContent();
+      });
 
+      // Select all nav-link elements
+      const mainSection = document.querySelector('main');
+      const navLinks = document.querySelectorAll('.nav-link');
+      
       // Add event listener to each nav-link
       navLinks.forEach((link) => {
         link.addEventListener('click', (e) => {
@@ -64,9 +73,47 @@
 
           // Add active class to clicked nav-link
           e.target.classList.add('active');
-          //alert(link.id)
+
+          // Update main section content
+          const tabId = e.target.id;
+
+          switch (tabId) {
+            case "about-tab":
+              mainSection.innerHTML = generateAboutContent();
+              break;
+            case "configure-tab":
+              mainSection.innerHTML = generateConfigureContent();
+              break;
+            case "price-tab":
+              mainSection.innerHTML = generatePriceContent();
+              break;
+            case "quote-tab":
+              mainSection.innerHTML = generateQuoteContent();
+              break;
+          }
         });
       });
+
+      function generateAboutContent() {
+        // Generate the About tab contents here
+        return "<h1>About!</h1>"
+      }
+
+      function generateConfigureContent() {
+        // Generate the Configure tab contents here
+        return "<h1>Configure!</h1>"
+      }
+
+      function generatePriceContent() {
+        // Generate the Price tab contents here
+        return "<h1>Price!</h1>"
+      }
+
+      function generateQuoteContent() {
+        // Generate the Quote tab contents here
+        return "<h1>Quote!</h1>"
+      }
     </script>
+
   </body>
 </html>
