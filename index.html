@@ -55,6 +55,7 @@
       window.addEventListener('load', function() {
         // Open with the 'Configure' view
         mainSection.innerHTML = generateConfigureView();
+        initProductList();
       });
 
 
@@ -78,10 +79,7 @@
           switch (navLinkId) {
             case "configure-tab":
               mainSection.innerHTML = generateConfigureView();
-
-              // Add event listener to add button
-              const addProductsButton = document.getElementById('addProducts');
-              addProductsButton.addEventListener('click', addProduct);
+              initProductList();
               break;
             case "price-tab":
               mainSection.innerHTML = generatePriceView();
@@ -140,6 +138,17 @@
         `;
 
         return configureContent
+      }
+
+
+      /**
+       * Initializes the Products list event listner.
+       *
+       * @returns {void}
+       */
+       function initProductList() {
+          const addProductsButton = document.getElementById('addProducts');
+          addProductsButton.addEventListener('click', addProduct);
       }
 
 
