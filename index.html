@@ -188,7 +188,7 @@
         localStorage.setItem('jank-cpq-contract', contractInput.value);
         localStorage.setItem('jank-cpq-startdate', startDateInput.value);
         localStorage.setItem('jank-cpq-enddate', endDateInput.value);
-        localStorage.setItem('jank-cpq-products', productValues.join("|"));
+        localStorage.setItem('jank-cpq-products', JSON.stringify(productValues));
         localStorage.setItem('jank-cpq-notes', notesInput.value);
       }
 
