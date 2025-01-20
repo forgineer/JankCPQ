@@ -173,14 +173,15 @@
         const contractInput = document.getElementById('contractInput');
         const startDateInput = document.getElementById('startDateInput');
         const endDateInput = document.getElementById('endDateInput');
-        const notesInput = document.getElementById('notesInput');
-
+        
         // Breakdown productsList into an actuall array of products
         // Any null or empty product list values are skipped
         const productInputs = document.querySelectorAll('#productList input');
         const productValues = Array.from(productInputs)
                               .map((input) => input.value.trim())
                               .filter((value) => value !== '');
+
+        const notesInput = document.getElementById('notesInput');
 
         // Save input values to localStorage
         localStorage.setItem('jank-cpq-account', accountInput.value);
@@ -208,7 +209,24 @@
        * @returns {void}
        */
       function clearConfiguration() {
-        console.log("Clear Configuration!");
+        // Clear ALL localStorage
+        localStorage.clear();
+        
+        // Gather input elements
+        const accountInput = document.getElementById('accountInput');
+        const contractInput = document.getElementById('contractInput');
+        const startDateInput = document.getElementById('startDateInput');
+        const endDateInput = document.getElementById('endDateInput');
+        const productList = document.getElementById('productList');
+        const notesInput = document.getElementById('notesInput');
+
+        // Clear ALL inputs
+        accountInput.value = '';
+        contractInput.value = '';
+        startDateInput.value = '';
+        endDateInput.value = '';
+        productList.innerHTML = '';
+        notesInput.value = '';
       }
 
 
