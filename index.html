@@ -51,17 +51,15 @@
 
     <!-- Main Scripting -->
     <script>
-      // Declare onLoad event when app is opened
-      window.addEventListener('load', function() {
-        // Open with the 'Configure' view
-        mainSection.innerHTML = generateConfigureView();
-        initProductList();
-      });
-
-
       // Iendify the 'main' section and all nav-links (tabs)
       const mainSection = document.querySelector('main');
       const navLinks = document.querySelectorAll('.nav-link');
+
+      // Declare onLoad event when app is opened
+      window.addEventListener('load', function() {
+        // Open with the 'Configure' view
+        generateConfigureView(mainSection);
+      });
 
 
       // Add event listener to each nav-link
@@ -78,14 +76,13 @@
 
           switch (navLinkId) {
             case "configure-tab":
-              mainSection.innerHTML = generateConfigureView();
-              initProductList();
+              generateConfigureView(mainSection);
               break;
             case "price-tab":
-              mainSection.innerHTML = generatePriceView();
+              generatePriceView(mainSection);
               break;
             case "quote-tab":
-              mainSection.innerHTML = generateQuoteView();
+              generateQuoteView(mainSection);
               break;
           }
         });
@@ -95,60 +92,123 @@
       /**
        * Generates the Configure view.
        *
-       * @returns {string} HTML string.
+       * @param {section} The HTML section (node) to be updated.
+       * @returns {void}
        */
-      function generateConfigureView() {
-        // Generate the Configure tab contents here
+      function generateConfigureView(section) {
+        // Build Configuration content (HTML)
         var configureContent = `
           <div class="container p-3">
             <div class="bg-body-tertiary border my-4 p-3 rounded-3">
-              <h2>Opportunity Details</h2>
+              <h2>
+                Opportunity Details
+                <button id="clearConfiguration" class="btn btn-secondary btn-sm float-end">Clear <i class="bi bi-cloud-rain"></i></button>
+                <button id="importConfiguration" class="btn btn-primary btn-sm float-end me-2">Import <i class="bi bi-cloud-upload"></i></button>
+                <button id="saveConfiguration" class="btn btn-success btn-sm float-end me-2">Save <i class="bi bi-floppy"></i></button>
+              </h2>
               <div class="row align-items-start">
                 <div class="col-6">
                   <!-- Account Name Input-->
                   <label for="accountInput" class="form-label">Account:</label>
                   <input type="text" class="form-control" id="accountInput"><br>
                   <!-- Contract ID Input -->
-                  <label for="contractId" class="form-label">Contract:</label>
-                  <input type="text" class="form-control" id="contractId">
+                  <label for="contractInput" class="form-label">Contract:</label>
+                  <input type="text" class="form-control" id="contractInput">
                 </div>
                 <div class="col-6">
                   <!-- Start Date Input -->
-                  <label for="startDate" class="form-label">Start Date:</label>
-                  <input type="date" class="form-control" id="startDate"><br>
+                  <label for="startDateInput" class="form-label">Start Date:</label>
+                  <input type="date" class="form-control" id="startDateInput"><br>
                   <!-- End Date Input -->
-                  <label for="endDate" class="form-label">End Date:</label>
-                  <input type="date" class="form-control" id="endDate">
+                  <label for="endDateInput" class="form-label">End Date:</label>
+                  <input type="date" class="form-control" id="endDateInput">
                 </div>
               </div>
             </div>
 
             <div class="bg-body-tertiary border my-4 p-3 rounded-3">
-              <h2>Products <button id="addProducts" type="button" class="btn btn-success btn-sm">Add</button></h2>
-              <div id="productsList">
+              <h2>Products <button id="addProducts" type="button" class="btn btn-success btn-sm">Add <i class="bi bi-plus-circle"></i></button></h2>
+              <div id="productList">
                 <!-- Products will be appended here -->
               </div>
             </div>
             
             <div class="bg-body-tertiary border my-4 p-3 rounded-3">
               <h2>Notes</h2>
-              <textarea class="form-control" id="notes" rows="10"></textarea>
+              <textarea class="form-control" id="notesInput" rows="10"></textarea>
             </div>
           </div>
         `;
 
-        return configureContent
+        // Update section with Configuration content
+        section.innerHTML = configureContent;
+
+        // Initialize various event listners
+        // Save Configuration event
+        const saveConfigurationButton = document.getElementById('saveConfiguration');
+        saveConfigurationButton.addEventListener('click', saveConfiguration);
+
+        // Import Configuration event
+        const importConfigurationButton = document.getElementById('importConfiguration');
+        importConfigurationButton.addEventListener('click', importConfiguration);
+
+        // Clear Configuration event
+        const clearConfigurationButton = document.getElementById('clearConfiguration');
+        clearConfigurationButton.addEventListener('click', clearConfiguration);
+
+        // Product list (add/remove) event
+        const addProductsButton = document.getElementById('addProducts');
+        addProductsButton.addEventListener('click', addProduct);
       }
 
 
       /**
-       * Initializes the Products list event listner.
+       * Saves the current Configuration.
        *
        * @returns {void}
        */
-       function initProductList() {
-          const addProductsButton = document.getElementById('addProducts');
-          addProductsButton.addEventListener('click', addProduct);
+      function saveConfiguration() {
+        // Gather input elements
+        const accountInput = document.getElementById('accountInput');
+        const contractInput = document.getElementById('contractInput');
+        const startDateInput = document.getElementById('startDateInput');
+        const endDateInput = document.getElementById('endDateInput');
+        const notesInput = document.getElementById('notesInput');
+
+        // Breakdown productsList into an actuall array of products
+        // Any null or empty product list values are skipped
+        const productInputs = document.querySelectorAll('#productList input');
+        const productValues = Array.from(productInputs)
+                              .map((input) => input.value.trim())
+                              .filter((value) => value !== '');
+
+        // Save input values to localStorage
+        localStorage.setItem('jank-cpq-account', accountInput.value);
+        localStorage.setItem('jank-cpq-contract', contractInput.value);
+        localStorage.setItem('jank-cpq-startdate', startDateInput.value);
+        localStorage.setItem('jank-cpq-enddate', endDateInput.value);
+        localStorage.setItem('jank-cpq-products', productValues.join("|"));
+        localStorage.setItem('jank-cpq-notes', notesInput.value);
+      }
+
+
+      /**
+       * Imports a Configuration for editing.
+       *
+       * @returns {void}
+       */
+      function importConfiguration() {
+        console.log("Import Configuration!");
+      }
+
+
+      /**
+       * Clears the current Configuration from the form and local storage.
+       *
+       * @returns {void}
+       */
+      function clearConfiguration() {
+        console.log("Clear Configuration!");
       }
 
 
@@ -158,16 +218,17 @@
        * @returns {void}
        */
       function addProduct() {
-        const productsList = document.getElementById('productsList');
+        const productList = document.getElementById('productList');
         const newProduct = document.createElement('div');
         newProduct.classList.add('input-group');
         newProduct.classList.add('mb-3');
 
+        // Build a new product input and append it to the 'productList' div
         newProduct.innerHTML = `
           <input type="text" class="form-control">
           <button class="btn btn-danger remove-product" type="button">Remove</button>
         `;
-        productsList.appendChild(newProduct);
+        productList.appendChild(newProduct);
 
         // Add event listener to remove button
         const removeButton = newProduct.querySelector('.remove-product');
@@ -182,39 +243,43 @@
        */
       function removedProduct(event) {
         const product = event.target.parentNode;
-        productsList.removeChild(product);
+        productList.removeChild(product);
       }
 
 
       /**
        * Generates the Price view.
        *
-       * @returns {string} HTML string.
+       * @param {section} The HTML section (node) to be updated.
+       * @returns {void}
        */
-      function generatePriceView() {
+      function generatePriceView(section) {
         var priceContent = `
           <div class="container p-3 text-center">
             <h1>🚧 This space is under construction 🚧</h1>
           </div>
         `;
 
-        return priceContent
+        // Update section with Price content
+        section.innerHTML = priceContent;
       }
 
 
       /**
        * Generates the Quote view.
        *
-       * @returns {string} HTML string.
+       * @param {section} The HTML section (node) to be updated.
+       * @returns {void}
        */
-      function generateQuoteView() {
+      function generateQuoteView(section) {
         var quoteContent = `
           <div class="container p-3 text-center">
             <h1>🚧 This space is under construction 🚧</h1>
           </div>
         `;
 
-        return quoteContent
+        // Update section with Quote content
+        section.innerHTML = quoteContent;
       }
     </script>
   </body>
