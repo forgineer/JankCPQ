@@ -32,7 +32,10 @@
     <!-- Navigational Tabs -->
     <ul class="nav nav-tabs text-center">
       <li class="nav-item flex-fill">
-        <b><a id="configure-tab" class="nav-link active" href="#configure">Configure</a></b>
+        <b><a id="authentication-tab" class="nav-link active" href="#authentication">Authentication</a></b>
+      </li>
+      <li class="nav-item flex-fill">
+        <b><a id="configure-tab" class="nav-link" href="#configure">Configure</a></b>
       </li>
       <li class="nav-item flex-fill">
         <b><a id="price-tab" class="nav-link" href="#price">Price</a></b>
@@ -45,6 +48,9 @@
     <!-- Main Content -->
     <!-- All content will be dynamically pushed here as different tabs are navigated -->
     <main></main>
+
+    <!-- Alert Message Content -->
+    <div id="alertMessages" class="fixed-bottom"></div>
     
     <!-- Declare Bootstrap JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
@@ -57,8 +63,8 @@
 
       // Declare onLoad event when app is opened
       window.addEventListener('load', function() {
-        // Open with the 'Configure' view
-        generateConfigureView(mainSection);
+        // Open with the 'Authentication' view
+        generateAuthenticationView(mainSection);
       });
 
 
@@ -75,6 +81,9 @@
           event.target.classList.add('active');
 
           switch (navLinkId) {
+            case "authentication-tab":
+              generateAuthenticationView(mainSection);
+              break;
             case "configure-tab":
               generateConfigureView(mainSection);
               break;
@@ -87,6 +96,96 @@
           }
         });
       });
+
+
+      /**
+       * Generates the Authentication view.
+       *
+       * @param {section} The HTML section (node) to be updated.
+       * @returns {void}
+       */
+       function generateAuthenticationView(section) {
+        const passphrase = sessionStorage.getItem('jank-cpq-passphrase');
+        var inputGroupHtml = `
+          <div id="passphraseInputGroup" class="input-group mb-3">
+            <input id="passphraseInput" type="password" class="form-control">
+            <button class="btn btn-primary" type="button" id="submitPassphrase">Submit Passphrase</button>
+          </div>
+        `;
+
+        if (passphrase > '') {
+          inputGroupHtml = `
+            <div id="passphraseInputGroup" class="input-group mb-3">
+              <input type="password" class="form-control" value="${passphrase}" disabled>
+              <button class="btn btn-outline-primary" type="button" id="clearPassphrase">Clear Passphrase</button>
+            </div>
+        `;
+        }
+
+        // Build Authentication content (HTML)
+        var AuthenticationContent = `
+          <div class="container p-3">
+            <div class="bg-body-tertiary border my-4 p-3 rounded-3">
+              <p>Enter a passphrase to secure locally stored data:</p>
+              ${inputGroupHtml}
+            </div>
+          </div>
+        `;
+
+        // Update section with Authentication content
+        section.innerHTML = AuthenticationContent;
+
+        // Initialize passphrase submission or clear event
+        if (passphrase > '') {
+          const clearPassphraseButton = document.getElementById('clearPassphrase');
+          clearPassphraseButton.addEventListener('click', clearPassphrase);
+        } else {
+          const submitPassphraseButton = document.getElementById('submitPassphrase');
+          submitPassphraseButton.addEventListener('click', submitPassphrase);
+        }
+
+      }
+
+
+      /**
+       * Submits the passphrase to sessionStorage and updates the 
+       * Authentication view on success.
+       *
+       * @returns {void}
+       */
+       function submitPassphrase() {
+        const passphraseInput = document.getElementById('passphraseInput');
+        var passphraseInputGroup = document.getElementById('passphraseInputGroup');
+        
+        sessionStorage.setItem('jank-cpq-passphrase', passphraseInput.value);
+
+        passphraseInputGroup.innerHTML = `
+          <input type="password" class="form-control" value="${passphraseInput.value}" disabled>
+          <button class="btn btn-outline-primary" type="button" id="clearPassphrase">Clear Passphrase</button>
+        `;
+
+        const clearPassphraseButton = document.getElementById('clearPassphrase');
+        clearPassphraseButton.addEventListener('click', clearPassphrase);
+      }
+
+
+      /**
+       * Clears the passphrase from sessionStorage and updates the 
+       * Authentication view on success.
+       *
+       * @returns {void}
+       */
+       function clearPassphrase() {
+        sessionStorage.clear();
+
+        passphraseInputGroup.innerHTML = `
+          <input id="passphraseInput" type="password" class="form-control">
+          <button class="btn btn-primary" type="button" id="submitPassphrase">Submit Passphrase</button>
+        `;
+
+        const submitPassphraseButton = document.getElementById('submitPassphrase');
+        submitPassphraseButton.addEventListener('click', submitPassphrase);
+      }
 
 
       /**
